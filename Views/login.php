@@ -65,7 +65,7 @@
                                                 <small class="text-muted font-weight-bold">Acesso de demonstração</small>
                                             </div>
                                             <div class="bg-light rounded p-2 text-center" style="border: 1px dashed #d1d3e2; cursor: pointer;" onclick="document.querySelector('[name=email]').value='hsrbsistemas@gmail.com'; document.querySelector('[name=senha]').value='123Mudar@';">
-                                                <small class="d-block text-gray-600"><i class="fas fa-envelope mr-1"></i> hsrbsistemas@gmail.com</small>
+                                                <small class="d-block text-gray-600"><i class="fas fa-envelope mr-1"></i> teste@teste.com</small>
                                                 <small class="d-block text-gray-600"><i class="fas fa-key mr-1"></i> 123Mudar@</small>
                                             </div>
                                         </div>                

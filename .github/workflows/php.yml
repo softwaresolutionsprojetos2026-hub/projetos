@@ -37,3 +37,14 @@ jobs:
 
     # - name: Run test suite
     #   run: composer run-script test
+
+  deploy_local_pull:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, fred]
+    needs: build
+
+    steps:
+    - name: Update local repository
+      run: |
+        git -C /srv/sistemas/projetos fetch --all --prune
+        git -C /srv/sistemas/projetos pull --ff-only origin main

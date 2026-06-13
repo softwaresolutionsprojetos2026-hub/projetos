@@ -75,7 +75,7 @@
                     <div class="fs-2" style="opacity: 0.3;"><i class="fa-solid fa-users-gear"></i></div>
                 </div>
                 <div class="mt-3">
-                    <?php if (isset($_SESSION['usuario_email']) && $_SESSION['usuario_email'] !== 'visitante@teste.com'): ?>
+                    <?php if (isset($_SESSION['usuario_id']) && (int) $_SESSION['usuario_id'] === 1): ?>
                         <a href="index.php?rota=admin/usuarios" class="text-white text-decoration-none small" style="font-size: 0.85rem;">Gerenciar <i class="fa-solid fa-arrow-right ms-1"></i></a>
                     <?php else: ?>
                         <span class="text-white small" style="font-size: 0.85rem; opacity: 0.9;"><i class="fa-solid fa-lock me-1"></i> Restrito</span>

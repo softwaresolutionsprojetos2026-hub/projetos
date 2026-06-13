@@ -41,50 +41,11 @@
 
             </form>
 
-            <!-- ACESSO DE TESTE INÍCIO -->
-            <div class="mt-4 p-3 bg-light rounded border border-dashed">
-                
-                <h6 class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">
-                    <i class="fa-solid fa-circle-info me-1 text-primary"></i> 
-                    Credenciais de Teste do Login xxxxx:
-                </h6>
-
-                <!--
-                <div class="small text-muted mb-1">
-                    <strong>Administrador (Total):</strong><br>
-                    Email: <code class="text-dark">admin@admin.com</code> | Senha: <code class="text-dark">admin123</code>
-                </div> -->
-                
-                <div class="small text-muted">
-                    <strong>Visitante (Limitado):</strong><br>
-                    Email: <code class="text-dark">visitante@teste.com</code> | Senha: <code class="text-dark">visitante123</code>
-                </div>
-
-                                        <div class="mt-3 fade-in delay-3">
-                                            <div class="text-center mb-2">
-                                                <small class="text-muted font-weight-bold">Acesso de demonstração</small>
-                                            </div>
-                                            <div class="bg-light rounded p-2 text-center" style="border: 1px dashed #d1d3e2; cursor: pointer;" onclick="document.querySelector('[name=email]').value='hsrbsistemas@gmail.com'; document.querySelector('[name=senha]').value='123Mudar@';">
-                                                <small class="d-block text-gray-600"><i class="fas fa-envelope mr-1"></i> teste@teste.com</small>
-                                                <small class="d-block text-gray-600"><i class="fas fa-key mr-1"></i> 123Mudar@</small>
-                                            </div>
-                                        </div>                
-
-            </div>
-
             <div class="text-center mt-3">
                 <a href="index.php" class="text-decoration-none small text-muted">← Voltar para a Vitrine</a>
             </div>
 
         </div>
-            <!-- ACESSO DE TESTE FIM  -->
-
-        <!--    
-            <div class="text-center mt-4">
-                <a href="index.php" class="text-decoration-none small text-muted">← Voltar para a Vitrine</a>
-            </div>
-
-        </div> -->
 
     </div>
 

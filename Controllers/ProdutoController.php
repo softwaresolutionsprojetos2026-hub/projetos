@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/AuthController.php";
+require_once __DIR__ . "/../Support/GaleriaPolicy.php";
 require_once __DIR__ . "/../Models/Produto.php"; 
 require_once __DIR__ . "/../Models/Categoria.php";
 
@@ -10,6 +12,28 @@ class ProdutoController {
     public function __construct() { 
         $this->model = new Produto(); 
         $this->catModel = new Categoria(); 
+    }
+
+    private function currentUserId() {
+        return (int) ($_SESSION['usuario_id'] ?? 0);
+    }
+
+    private function isMaster() {
+        return AuthController::isMaster();
+    }
+
+    private function redirectDenied($rota = "index.php?rota=admin/produtos") {
+        $_SESSION['msg'] = ["Acesso negado para o recurso solicitado."];
+        header("Location: " . $rota);
+        exit;
+    }
+
+    private function findManagedProduct($id) {
+        return $this->model->findForUser($id, $this->currentUserId(), $this->isMaster());
+    }
+
+    private function countUploadedImages() {
+        return GaleriaPolicy::countUploadedImages($_FILES['imagens']['name'] ?? []);
     }
     
     public function indexPublico() {
@@ -61,9 +85,9 @@ class ProdutoController {
             exit; 
         }
 
-        $produto = $this->model->find($id);
+        $produto = $this->findManagedProduct($id);
         if (!$produto) { 
-            die("Produto não encontrado!"); 
+            $this->redirectDenied();
         }
 
         $imagens = $this->model->getImagens($id); 
@@ -74,10 +98,10 @@ class ProdutoController {
 
     public function store() {
         global $pdo;
-        $usuario_id = $_SESSION['usuario_id'];
+        $usuario_id = $this->currentUserId();
 
         // Validação de limites para usuários do plano 'limitado'
-        if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'limitado') {
+        if (GaleriaPolicy::isLimitedUser($_SESSION['usuario_tipo'] ?? null)) {
             // 1. Validar limite de 2 produtos
             $stmtProd = $pdo->prepare("SELECT COUNT(*) FROM produtos WHERE usuario_id = ?");
             $stmtProd->execute([$usuario_id]);
@@ -88,7 +112,7 @@ class ProdutoController {
             }
 
             // 2. Validar limite de 2 imagens no upload atual
-            if (isset($_FILES['imagens']['name']) && count(array_filter($_FILES['imagens']['name'])) > 2) {
+            if (GaleriaPolicy::hasImageUploadLimitExceeded($_SESSION['usuario_tipo'] ?? null, $this->countUploadedImages())) {
                 $_SESSION['msg'] = ["Limite atingido: Permitido no máximo 2 imagens por produto."];
                 header("Location: index.php?rota=admin/produtos");
                 exit;
@@ -116,7 +140,17 @@ class ProdutoController {
         $categoria_id = filter_input(INPUT_POST, "categoria_id", FILTER_VALIDATE_INT);
         $nome = filter_input(INPUT_POST, "nome", FILTER_SANITIZE_SPECIAL_CHARS);
         $preco = filter_input(INPUT_POST, "preco", FILTER_VALIDATE_FLOAT);
-        $usuario_id = $_SESSION['usuario_id'];
+        $usuario_id = $this->currentUserId();
+
+        if (!$id || !$this->findManagedProduct($id)) {
+            $this->redirectDenied();
+        }
+
+        if (GaleriaPolicy::hasImageUploadLimitExceeded($_SESSION['usuario_tipo'] ?? null, $this->countUploadedImages())) {
+            $_SESSION['msg'] = ["Limite atingido: Permitido no máximo 2 imagens por produto."];
+            header("Location: index.php?rota=admin/produtos/editar&id=" . $id);
+            exit;
+        }
 
         if ($id && $categoria_id && !empty($nome) && $preco !== false) {
             $this->model->update($id, $categoria_id, $nome, $preco);
@@ -144,17 +178,20 @@ class ProdutoController {
     // Método de upload modificado para criar a pasta "uploads/ID_DO_USUARIO/"
     private function uploadImagens($prod_id, $usuario_id) {
         if (isset($_FILES["imagens"])) {
-            
             // Define a pasta isolada usando o ID do usuário da sessão
             $dir = "uploads/" . $usuario_id . "/";
 
-            // Se a pasta do usuário não existir, o PHP cria com permissões (0777)
+            // Se a pasta do usuário não existir, cria com permissões restritas.
             if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
+                mkdir($dir, 0755, true);
             }
 
             for ($i = 0; $i < count($_FILES["imagens"]["name"]); $i++) {
                 if ($_FILES["imagens"]["error"][$i] !== UPLOAD_ERR_OK) continue;
+
+                if (!GaleriaPolicy::isAllowedImageFilename($_FILES["imagens"]["name"][$i])) {
+                    continue;
+                }
 
                 $ext = strtolower(pathinfo($_FILES["imagens"]["name"][$i], PATHINFO_EXTENSION)); 
                 
@@ -168,10 +205,41 @@ class ProdutoController {
         }
     }
 
+    public function deleteImage() {
+        AuthController::check();
+        header('Content-Type: application/json; charset=utf-8');
+
+        $img_id = filter_input(INPUT_POST, 'img_id', FILTER_VALIDATE_INT);
+        if (!$img_id) {
+            http_response_code(400);
+            echo json_encode(["sucesso" => false, "erro" => "Imagem inválida."]);
+            exit;
+        }
+
+        $imagem = $this->model->findImagemForUser($img_id, $this->currentUserId(), $this->isMaster());
+        if (!$imagem) {
+            http_response_code(403);
+            echo json_encode(["sucesso" => false, "erro" => "Acesso negado para excluir esta imagem."]);
+            exit;
+        }
+
+        if (is_file($imagem['caminho'])) {
+            @unlink($imagem['caminho']);
+        }
+
+        $resultado = $this->model->deleteImagemById($img_id);
+        echo json_encode(["sucesso" => (bool) $resultado]);
+        exit;
+    }
+
     public function delete() { 
         $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT); 
         
         if ($id) {
+            if (!$this->findManagedProduct($id)) {
+                $this->redirectDenied(isset($_GET['origem']) && $_GET['origem'] === 'moderacao' ? "index.php?rota=admin/moderacao" : "index.php?rota=admin/produtos");
+            }
+
             // Remove os arquivos físicos da pasta do usuário de forma correta
             foreach($this->model->getImagens($id) as $img) { 
                 if (file_exists($img["caminho"])) { 

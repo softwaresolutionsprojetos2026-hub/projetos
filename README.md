@@ -1,104 +1,95 @@
 # Projeto Galeria MVC v3
 
-Aplicacao web em PHP (padrao MVC) para vitrine/galeria de produtos com painel administrativo, controle de usuarios e upload de imagens por produto.
+Aplicação web em PHP MVC para vitrine de produtos com painel administrativo, upload de imagens e moderação. Este repositório foi ajustado para seguir o mínimo operacional e documental exigido pelo projeto0, com endurecimento de autenticação, autorização por recurso e configuração externa por variáveis de ambiente.
 
-## Visao Geral
+## Visão geral
 
-A aplicacao possui dois contextos principais:
+O projeto possui dois contextos principais:
 
-- Publico: vitrine de produtos, busca, filtro por categoria e pagina de detalhe.
-- Administrativo: dashboard, categorias, produtos, moderacao e usuarios (com regras por perfil).
+- Público: galeria, detalhe, busca e filtro por categoria.
+- Administrativo: dashboard, categorias, produtos, moderação e gestão de usuários.
 
-Arquitetura principal:
+Estrutura principal:
 
-- `index.php`: roteamento de paginas (`rota`).
-- `router.php`: processamento de formularios e acoes (`acao`).
-- `Controllers/`: regras de fluxo.
-- `Models/`: acesso a dados.
-- `Views/`: interface publica e administrativa.
-- `config/conexao.php`: conexao PDO + bootstrap inicial de banco/tabelas.
+- `index.php`: roteamento das páginas.
+- `router.php`: processamento de ações e formulários.
+- `Controllers/`: orquestração de fluxo.
+- `Models/`: acesso a dados via PDO.
+- `Views/`: interface pública e administrativa.
+- `config/conexao.php`: conexão, criação de schema e compatibilidade de colunas.
+- `docs/`: documentação mínima alinhada ao projeto0.
 
-## Funcionalidades
+## Regras de acesso
 
-- Cadastro, edicao e exclusao de categorias.
-- Cadastro, edicao e exclusao de produtos.
-- Upload de multiplas imagens por produto.
-- Armazenamento de imagens em pasta por usuario (`uploads/{usuario_id}/`).
-- Busca de produtos por nome e filtro por categoria.
-- Pagina de detalhe com dados do autor (nome, email, telefone).
-- Login, logout e registro de visitante.
-- Gestao de usuarios (somente admin master).
-- Moderacao com paginacao (somente admin master).
-
-## Regras de Acesso
-
-- Qualquer usuario autenticado acessa painel admin basico.
-- Apenas usuario com `id = 1` acessa:
-  - `admin/usuarios`
-  - `admin/moderacao`
-  - operacoes sensiveis de usuarios (criar, editar, excluir, alternar limite)
+- Todo usuário autenticado pode acessar dashboard, categorias e produtos.
+- Apenas o administrador master (`usuarios.id = 1`) pode acessar usuários e moderação global.
+- Edição, exclusão e remoção de imagens de produto agora exigem posse do recurso ou perfil master no servidor.
 
 ## Requisitos
 
-- PHP 8.1+ (recomendado 8.3)
-- Extensao PDO MySQL habilitada
-- MySQL 8+
-- Permissao de escrita na pasta `uploads/`
+- PHP 8.1+.
+- Extensão PDO MySQL habilitada.
+- MySQL 8+.
+- Permissão de escrita em `uploads/`.
 
-## Estrutura de Banco
+## Configuração por ambiente
 
-Banco padrao: `sistema_galeria`
+O projeto não depende mais de credenciais fixas em código. Use as variáveis abaixo em desenvolvimento ou produção:
 
-Tabelas principais:
+```env
+APP_ENV=local
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=sistema_galeria
+DB_USER=galeria
+DB_PASSWORD=troque_esta_senha
+APP_BOOTSTRAP_SEED_USERS=true
+APP_BOOTSTRAP_ADMIN_EMAIL=admin@example.com
+APP_BOOTSTRAP_ADMIN_PASSWORD=troque_esta_senha
+APP_BOOTSTRAP_VISITOR_EMAIL=visitante@example.com
+APP_BOOTSTRAP_VISITOR_PASSWORD=troque_esta_senha
+```
+
+O bootstrap de usuários só acontece quando `APP_BOOTSTRAP_SEED_USERS=true` e as credenciais iniciais são fornecidas por ambiente.
+
+## Execução local
+
+1. Exporte as variáveis de ambiente usando o modelo em `.env.example`.
+2. Garanta permissão de escrita em `uploads/`.
+3. Inicie o servidor embutido:
+
+```bash
+cd /srv/sistemas/projetos
+set -a && . ./.env.example && set +a
+php -S 0.0.0.0:8080
+```
+
+4. Acesse:
+
+- Público: `http://localhost:8080/index.php`
+- Login: `http://localhost:8080/index.php?rota=login`
+
+## Testes
+
+- sem Composer local: `php tests/run.php`
+- com Composer local e dependências instaladas: `composer run test` ou `composer run test:phpunit`
+
+O runner em `tests/run.php` usa PHPUnit automaticamente quando `vendor/bin/phpunit` estiver disponível.
+
+## Banco de dados
+
+Schema principal:
 
 - `usuarios`
 - `categorias`
 - `produtos`
 - `imagens`
 
-Observacao:
+O arquivo `config/conexao.php` cria tabelas ausentes e adiciona colunas/relacionamentos necessários quando detecta schema legado.
 
-- O arquivo `config/conexao.php` cria o banco e tabelas automaticamente se nao existirem.
-- Tambem cria usuarios iniciais quando a tabela `usuarios` esta vazia.
+## Rotas principais
 
-## Credenciais Iniciais
-
-Criadas automaticamente no primeiro boot (quando nao existem usuarios):
-
-- Administrador
-  - Email: `admin@admin.com`
-  - Senha: `admin123`
-- Visitante de teste
-  - Email: `visitante@teste.com`
-  - Senha: `visitante123`
-
-Importante:
-
-- Altere as credenciais padrao em ambiente real.
-
-## Como Executar Localmente
-
-1. Ajuste a conexao em `config/conexao.php`:
-   - `host`
-   - `user`
-   - `pass`
-   - `dbname`
-2. Garanta permissao de escrita em `uploads/`.
-3. Inicie um servidor PHP na raiz do projeto:
-
-```bash
-cd /srv/sistemas/projeto_galeria_mvc_v3
-php -S 0.0.0.0:8080
-```
-
-4. Acesse:
-
-- Publico: `http://localhost:8080/index.php`
-- Login: `http://localhost:8080/index.php?rota=login`
-
-## Rotas de Pagina (`index.php`)
-
-Publicas:
+Páginas públicas:
 
 - `index.php?rota=galeria`
 - `index.php?rota=detalhe&id={id}`
@@ -106,16 +97,16 @@ Publicas:
 - `index.php?rota=registrar`
 - `index.php?rota=logout`
 
-Administrativas (requer login):
+Páginas administrativas:
 
 - `index.php?rota=admin/dashboard`
 - `index.php?rota=admin/categorias`
 - `index.php?rota=admin/produtos`
 - `index.php?rota=admin/produtos/editar&id={id}`
-- `index.php?rota=admin/usuarios` (apenas `id=1`)
-- `index.php?rota=admin/moderacao` (apenas `id=1`)
+- `index.php?rota=admin/usuarios`
+- `index.php?rota=admin/moderacao`
 
-## Acoes de Formulario (`router.php`)
+Ações em `router.php`:
 
 - `fazer_login`
 - `registrar_visitante`
@@ -124,67 +115,44 @@ Administrativas (requer login):
 - `cadastrar_produto`
 - `editar_produto`
 - `excluir_produto`
-- `excluir_imagem_avulsa` (retorna JSON)
-- `salvar_usuario` (admin master)
-- `editar_usuario` (admin master)
-- `excluir_usuario` (admin master)
-- `alternar_limite` (admin master)
+- `excluir_imagem_avulsa`
+- `salvar_usuario`
+- `editar_usuario`
+- `excluir_usuario`
+- `alternar_limite`
 
-## Deploy em Docker Swarm
+## Docker Swarm
 
-Arquivos de referencia no workspace:
+Arquivos de referência:
 
 - `/srv/swarm/galeria-fred.yml`
-- `/srv/swarm/galeria-fred.env`
+- `/srv/swarm/galeria-fred.env.example`
 
-Passos basicos:
-
-1. Defina variaveis de ambiente no arquivo `.env` da stack:
-
-```env
-MYSQL_ROOT_PASSWORD=troque_esta_senha
-MYSQL_DATABASE=sistema_galeria
-MYSQL_USER=galeria
-MYSQL_PASSWORD=troque_esta_senha
-```
-
-2. Carregue variaveis e aplique a stack:
+Passos:
 
 ```bash
+cp /srv/swarm/galeria-fred.env.example /srv/swarm/galeria-fred.env
 set -a && . /srv/swarm/galeria-fred.env && set +a
 docker stack deploy -c /srv/swarm/galeria-fred.yml galeria-fred
 ```
 
-3. Acompanhe logs:
+Observações:
 
-```bash
-docker service logs galeria-fred_app -f
-docker service logs galeria-fred_mysql -f
-```
+- O MySQL permanece apenas na rede interna da stack.
+- A aplicação é publicada via Traefik com HTTPS.
+- Uploads persistem em volume dedicado.
 
-Observacoes de infraestrutura:
+## Documentação associada
 
-- Banco MySQL nao publica porta externamente.
-- Aplicacao publica via Traefik com HTTPS.
-- Uploads persistidos em volume/pasta dedicada.
+- `PADROES-WORKSPACE-AGNOSTICOS.md`: espelho curto das normas adotadas.
+- `docs/README.md`: índice da documentação do produto.
+- `docs/adr/`: decisões de arquitetura.
+- `docs/slo/README.md`: SLO inicial e justificativa.
+- `docs/sbom/README.md`: plano de SBOM.
 
-## Seguranca e Boas Praticas
+## Segurança operacional
 
-- Nunca versione senhas reais em arquivos `.env`.
-- Troque imediatamente credenciais padrao.
-- Restrinja permissao de escrita apenas para `uploads/`.
-- Mantenha `PHP_DISPLAY_ERRORS=0` em producao.
-
-## Problemas Comuns
-
-- Erro de conexao com banco:
-  - Verifique host e credenciais em `config/conexao.php`.
-- Imagem nao aparece:
-  - Verifique permissao da pasta `uploads/`.
-  - Confirme se o caminho foi salvo na tabela `imagens`.
-- Redirecionamento para login:
-  - Sessao expirada ou usuario sem permissao para a rota.
-
-## Licenca
-
-Defina a licenca do projeto (ex.: MIT) conforme a politica da equipe.
+- Não versione segredos reais.
+- Use `PHP_DISPLAY_ERRORS=0` em produção.
+- Restrinja escrita ao diretório `uploads/`.
+- Revise credenciais bootstrap após o primeiro acesso.

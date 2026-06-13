@@ -30,13 +30,21 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --no-interaction
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Run lint
+      run: composer run lint
 
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Run tests
+      run: composer run test
+
+    - name: Run PHPUnit suite
+      run: |
+        if [ -x vendor/bin/phpunit ]; then
+          composer run test:phpunit
+        else
+          echo "PHPUnit not installed yet; fallback runner already executed."
+        fi
 
   deploy_local_pull:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

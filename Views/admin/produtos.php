@@ -154,7 +154,7 @@
                     <div class="mb-3">
 
                         <!-- SE FOR VISITANTE, LIMITA O UPLOAD PARA 1 IMAGEM -->                    
-                        <?php if ($_SESSION['usuario_email'] === 'visitante@teste.com'): ?>
+                        <?php if (($_SESSION['usuario_tipo'] ?? 'limitado') === 'limitado'): ?>
                             
                             <label class="form-label small fw-bold text-danger">Imagem de Apresentação (Limite: 1 foto para teste)</label>
                             <input type="file" name="imagens[]" class="form-control input-preview-js" accept="image/*" required>

@@ -69,19 +69,3 @@
 </nav>
 
 <div class="d-flex" style="margin-top: 56px;">
-    
-<!--
-```
-
-*(Lembre-se de ajustar o CSS do seu `Views/includes/header.php` se a sidebar estiver cobrindo a navbar).*
-
----
-
-### 🚀 Credenciais de Acesso:
-O sistema criará automaticamente este usuário na primeira execução:
-*   **E-mail:** `admin@admin.com`
-*   **Senha:** `admin123`
-
-Agora seu painel está protegido, com login seguro, reconhecimento de usuário logado e opção de encerrar a sessão!
-
--->

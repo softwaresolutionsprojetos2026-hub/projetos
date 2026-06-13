@@ -67,7 +67,43 @@ class Produto {
         return $stmt->fetch(PDO::FETCH_ASSOC); 
     }
 
+    public function findForUser($id, $usuario_id, $isMaster = false) {
+        $sql = "SELECT p.*, c.nome as categoria_nome,
+                       u.nome as autor_nome, u.email as autor_email, u.telefone as autor_telefone
+                FROM produtos p
+                JOIN categorias c ON p.categoria_id = c.id
+                JOIN usuarios u ON p.usuario_id = u.id
+                WHERE p.id = ?";
+        $params = [$id];
+
+        if (!$isMaster) {
+            $sql .= " AND p.usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getImagens($produto_id) { $stmt = $this->db->prepare("SELECT * FROM imagens WHERE produto_id = ? ORDER BY id ASC"); $stmt->execute([$produto_id]); return $stmt->fetchAll(PDO::FETCH_ASSOC); }
+
+    public function findImagemForUser($imagem_id, $usuario_id, $isMaster = false) {
+        $sql = "SELECT i.*, p.usuario_id, p.id AS produto_id
+                FROM imagens i
+                JOIN produtos p ON p.id = i.produto_id
+                WHERE i.id = ?";
+        $params = [$imagem_id];
+
+        if (!$isMaster) {
+            $sql .= " AND p.usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     
     // Atualizado para registrar o usuario_id no banco de dados
     public function create($categoria_id, $nome, $preco, $usuario_id) { 
@@ -78,6 +114,7 @@ class Produto {
     
     public function addImagem($produto_id, $caminho) { $stmt = $this->db->prepare("INSERT INTO imagens (produto_id, caminho) VALUES (?, ?)"); return $stmt->execute([$produto_id, $caminho]); }
     public function update($id, $categoria_id, $nome, $preco) { $stmt = $this->db->prepare("UPDATE produtos SET categoria_id = ?, nome = ?, preco = ? WHERE id = ?"); return $stmt->execute([$categoria_id, $nome, $preco, $id]); }
+    public function deleteImagemById($imagem_id) { $stmt = $this->db->prepare("DELETE FROM imagens WHERE id = ?"); return $stmt->execute([$imagem_id]); }
     public function deleteImagens($produto_id) { $stmt = $this->db->prepare("DELETE FROM imagens WHERE produto_id = ?"); return $stmt->execute([$produto_id]); }
     public function delete($id) { $stmt = $this->db->prepare("DELETE FROM produtos WHERE id = ?"); return $stmt->execute([$id]); }
     public function countAll() { return (int)$this->db->query("SELECT COUNT(*) FROM produtos")->fetchColumn(); }

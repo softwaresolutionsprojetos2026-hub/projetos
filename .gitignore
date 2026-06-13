@@ -4,4 +4,7 @@ composer-lock.json
 composer.phar
 node_modules/
 package-lock.json
-yarn.lock   
+yarn.lock
+.env
+.env.local
+.env.*.local

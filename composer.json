@@ -1,13 +1,38 @@
 {
     "name": "lucas/curso-php",
-    "description": "Curso de PHP",
+    "description": "Galeria de produtos em PHP MVC",
+    "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^8.0"
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
     },
     "autoload": {
-        "psr-4": {
-            "App\\": "src/"
-        }
+        "classmap": [
+            "Controllers/",
+            "Models/",
+            "Support/",
+            "config/"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "scripts": {
+        "lint": [
+            "@php -l index.php",
+            "@php -l router.php",
+            "find Controllers Models config -name '*.php' -print0 | xargs -0 -n1 php -l"
+        ],
+        "test": [
+            "@php tests/run.php"
+        ],
+        "test:phpunit": [
+            "vendor/bin/phpunit --configuration phpunit.xml"
+        ]
     }
 }

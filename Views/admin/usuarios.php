@@ -150,12 +150,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Telefone / WhatsApp</label>
-                        <input type="text" name="telefone" id="telefone" class="form-control" placeholder="(11) 99999-9999" maxlength="15" onkeyup="mascaraTelefone(this)" required>
+                        <input type="text" name="telefone" id="edit-telefone" class="form-control" placeholder="(11) 99999-9999" maxlength="15" onkeyup="mascaraTelefone(this)" required>
                     </div>                    
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Plano / Limite de Acesso</label>
                         <select name="tipo_acesso" id="edit-acesso" class="form-select bg-light">
-                            <option value="limitado">Limitado (2 Produtos / 2 Imagens / 2 Categorias)</option>
+                            <option value="limitado">Limitado (2 produtos / 2 imagens)</option>
                             <option value="ilimitado">Ilimitado (Acesso Total)</option>
                         </select>
                     </div>

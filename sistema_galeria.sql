@@ -26,10 +26,7 @@ CREATE TABLE `categorias` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------
--- Records of categorias
--- ----------------------------
-INSERT INTO `categorias` VALUES ('1', 'Limpeza', '2026-06-08 10:11:25');
+-- Dados de exemplo removidos. Popular manualmente no ambiente alvo.
 
 -- ----------------------------
 -- Table structure for `imagens`
@@ -45,11 +42,7 @@ CREATE TABLE `imagens` (
   CONSTRAINT `imagens_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------
--- Records of imagens
--- ----------------------------
-INSERT INTO `imagens` VALUES ('3', '2', 'uploads/1/img_6a285d25678d81.39712307.jpg', '2026-06-09 15:36:21');
-INSERT INTO `imagens` VALUES ('4', '2', 'uploads/1/img_6a285d256f9231.95985425.jpg', '2026-06-09 15:36:21');
+-- Dados de exemplo removidos. Popular manualmente no ambiente alvo.
 
 -- ----------------------------
 -- Table structure for `produtos`
@@ -69,10 +62,7 @@ CREATE TABLE `produtos` (
   CONSTRAINT `produtos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------
--- Records of produtos
--- ----------------------------
-INSERT INTO `produtos` VALUES ('2', '1', 'teste', '1.00', '2026-06-09 15:36:19', '1');
+-- Dados de exemplo removidos. Popular manualmente no ambiente alvo.
 
 -- ----------------------------
 -- Table structure for `usuarios`
@@ -90,9 +80,4 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------
--- Records of usuarios
--- ----------------------------
-INSERT INTO `usuarios` VALUES ('1', 'Administrador', 'admin@admin.com', '$2y$12$uzt4EUDgSKvZ1/FIoW6FqO7citYXZkx9omDkqC9khUvy8nuvLB3Sm', '2026-06-06 09:11:11', 'ilimitado', null);
-INSERT INTO `usuarios` VALUES ('2', 'Visitante de Teste', 'visitante@teste.com', '$2y$12$xKD9Qby713KgKEXYdkal.eXQsDZ3qr6uC1nsakVu21k3leXAsEBwu', '2026-06-06 09:19:58', 'limitado', null);
-INSERT INTO `usuarios` VALUES ('3', 'Fred', 'fred@fred.com', '$2y$12$0XVbBVCjR8MdX6hqrBBEfuO.F/.taEwT6CdKfGAxUTbyuiQ208se.', '2026-06-08 08:34:04', 'limitado', '(22) 22222-2222');
+-- Dados de exemplo removidos. Use bootstrap por variável de ambiente ou carga controlada.

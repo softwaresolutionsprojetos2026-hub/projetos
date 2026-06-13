@@ -14,7 +14,7 @@
         <div class="card card-login mx-auto p-4 bg-white">
             <div class="text-center mb-4">
                 <h3 class="fw-bold">Acesso Restrito</h3>
-                <p class="text-muted">Entre com suas credenciais aqui</p>
+                <p class="text-muted">Entre com suas credenciais aqui:</p>
             </div>
             
             <?php if(isset($_SESSION['erro_login'])): ?>

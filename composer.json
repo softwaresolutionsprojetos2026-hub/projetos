@@ -1,6 +1,7 @@
 {
     "name": "lucas/curso-php",
     "description": "Curso de PHP",
+    "license": "proprietary",
     "require": {
         "php": "^8.0"
     },

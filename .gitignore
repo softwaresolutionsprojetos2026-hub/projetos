@@ -1,4 +1,4 @@
-action-runner/
+actions-runner/
 vendor/
 composer-lock.json
 composer.phar

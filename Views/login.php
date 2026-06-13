@@ -31,7 +31,7 @@
                     <label class="form-label small fw-bold">Senha</label>
                     <input type="password" name="senha" class="form-control" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Entrar no Painel</button>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Entrar no Painel Adm</button>
 
                 <!-- LINK DE CADASTRO -->
                 <div class="text-center mt-3">

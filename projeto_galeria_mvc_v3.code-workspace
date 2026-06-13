@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../../swarm"
+		},
+		{
+			"path": "../projeto0"
 		}
 	],
 	"settings": {}
